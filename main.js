@@ -20,14 +20,27 @@ function createWindow () {
   //   protocol: 'file:',
   //   slashes: true
   // }))
-  mainWindow.loadURL('http://www.github.com');
+  mainWindow.webContents.session.webRequest.onHeadersReceived( {urls : ['*']}, (details, cb)=>{
+    // console.log(` url : ${details.url}`);
+    // let hd = details.responseHeaders;
+    // console.log(` headers : ${hd}`);
+    
+   // details.responseHeaders["access-control-allow-origin"] = [details.url];
+    details.responseHeaders["dummy"] = ['aaaa'];
+
+    //console.log('header 2 : ' + JSON.stringify(hd));
+    console.log('-------');
+    cb({cancel: false, responseHeaders : details.responseHeaders, statusLine : details.statusLine});
+  });
+
+
+  mainWindow.loadURL('http://www.google.com');
 
   // Open the DevTools.
+    mainWindow.webContents.openDevTools();
   mainWindow.webContents.on('did-get-response-details', (event, status, newurl, origin, httpresponsecode, reequestMed, refferer, headers, type)=>{
-    event.preventDefault();
-    console.log(event);
-    headers['dummy'] = 'aaa';
-    return event;
+   // console.log(headers['access-control-allow-origin']);
+    console.log(headers['dummy']);
   });
 
   // Emitted when the window is closed.
